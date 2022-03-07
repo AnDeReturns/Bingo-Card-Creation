@@ -1,0 +1,133 @@
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+public class BingoCardPanel extends JPanel implements MouseListener {
+    private int[][] arr;
+    private int ball;
+    private ArrayList<Integer> ballList;
+    private boolean[][] arrMatch;
+    private boolean BINGO;
+    private ArrayList<Integer> allNums;
+    public BingoCardPanel() {
+        arr = new int[5][5];
+        ball = 0;
+        ballList = new ArrayList<Integer>();
+        ballList.add(0);
+        arrMatch = new boolean[5][5];
+        BINGO = false;
+        allNums = new ArrayList<Integer>();
+        for(int i = 0; i<5; i++) {
+            for(int j = 0; j<5; j++) {
+                int num = (int)(Math.random()*((i*15+15)-(i*15+1)+1)+i*15+1);
+                if(!(allNums.contains(num)))
+                {
+                    arr[j][i] = num;
+                    allNums.add(num);
+                }
+                else
+                    j--;
+            }
+        }
+        addMouseListener(this);
+    }
+    public void paint(Graphics g) {
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(Color.BLUE);
+        g.fillRect(210, 140, 1020, 760);
+        g.setColor(Color.WHITE);
+        g.fillRect(220, 150, 1000, 750);
+        g.setColor(Color.BLACK);
+        for(int i = 0; i<6; i++)
+            g.drawLine(i*200+220, 150, i*200+220, getHeight());
+        for(int i = 0; i<6; i++)
+            g.drawLine(220, i*150+150, 1220, i*150+150);
+        g.setFont(new Font("TimesRoman", Font.PLAIN, 190));
+        g.drawString("B  I  N  G  O", 230, 130);
+        g.setColor(Color.RED);
+        for(int i = 0; i<5; i++)
+            for(int j = 0; j<5; j++)
+                if(arrMatch[i][j])
+                    g.fillOval(j*200+220,i*150+150,200,150);
+        g.setColor(Color.BLACK);
+        for(int i = 0; i<5; i++)
+            for(int j = 0; j<5; j++)
+                if(!(i == 2 && j == 2))
+                    g.drawString(""+arr[j][i], i*200+220, j*150+290);
+        g.setFont(new Font("TimesRoman", Font.PLAIN, 80));
+        g.setColor(Color.BLUE);
+        g.drawString("FREE", 620, 550);
+        g.setColor(Color.BLACK);
+        g.fillOval(1250,30,150, 150);
+        g.setColor(Color.BLUE);
+        g.fillOval(1260, 40, 130, 130);
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("TimesRoman", Font.PLAIN, 40));
+        if(ball == 0)
+            g.drawString("BALL",1275, 115);
+        else
+            g.drawString(""+ball,1305, 115);
+        int x = 0;
+        for(int i = 0; i<5; i++)
+            if(arrMatch[x][x])
+                x++;
+        if(x == 5)
+            BINGO = true;
+        x = 4;
+        for(int i = 0; i<5; i++)
+            if(arrMatch[x][i])
+                x--;
+        if(x == -1)
+            BINGO = true;
+        x = 0;
+        for(int i = 0; i<5; i++) {
+            for(int j = 0; j<5; j++)
+                if(arrMatch[i][j])
+                    x++;
+            if(x == 5)
+                BINGO = true;
+            x = 0;
+        }
+        for(int i = 0; i<5; i++) {
+            for (int j = 0; j < 5; j++)
+                if (arrMatch[j][i])
+                    x++;
+            if (x == 5)
+                BINGO = true;
+            x = 0;
+        }
+        if(BINGO){
+            g.setColor(Color.GREEN);
+            g.setFont(new Font("TimesRoman", Font.PLAIN, 20));
+            g.drawString("You got BINGO!!!",1250,220);
+            System.out.println(ballList);
+        }
+    }
+    public void mousePressed(MouseEvent e){}
+    public void mouseReleased(MouseEvent e){}
+    public void mouseEntered(MouseEvent e){}
+    public void mouseExited(MouseEvent e){}
+    public void mouseClicked(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+        if(!BINGO) {
+            if(e.getButton() == e.BUTTON1) {
+                if(x >= 1250 && x<= 1400 && y >= 40 && y <= 170) {
+                    while(ballList.contains(ball)) {
+                        ball = (int)(Math.random()*(75)+1);
+                        arrMatch[2][2] = true;
+                        if(!(ballList.contains(ball)))
+                            for (int i = 0; i < 5; i++)
+                                for (int j = 0; j < 5; j++)
+                                    if (arr[i][j] == ball)
+                                        arrMatch[i][j] = true;
+                    }
+                    ballList.add(ball);
+                    repaint();
+                }
+            }
+        }
+    }
+}
