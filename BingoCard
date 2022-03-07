@@ -1,0 +1,13 @@
+import javax.swing.JFrame;
+public class BingoCard extends JFrame{
+    private static final int WIDTH = 1440;
+    private static final int HEIGHT = 900;
+    public BingoCard(String title)
+    {
+        super(title);
+        setSize(WIDTH,HEIGHT);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        add(new BingoCardPanel());
+        setVisible(true);
+    }
+}
